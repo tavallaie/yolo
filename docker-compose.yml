@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  web:
+    image: "yolo5"
+    command: uvicorn serv:app --reload --host 0.0.0.0 --port 5000 
+    volumes:
+      - ./src:/code
+    expose:
+      - 5000
+#    environment:
+#      - VIRTUAL_HOST=ocr.fanaplab.com
+#      - LETSENCRYPT_HOST=ocr.fanaplab.com
+#      - LETSENCRYPT_EMAIL=a.tavallaie@gmail.com
+#networks: 
+#  default: 
+#    external: 
+#      name: nginx-proxy
