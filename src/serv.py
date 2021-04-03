@@ -13,7 +13,7 @@ app = FastAPI(
     version="0.0.1",
 )
 # Model
-model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
+model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True,force_reload=True)
 
 
 @app.post("/predict")
@@ -40,16 +40,18 @@ async def serving(file:UploadFile=File(...)):
                             r['result'][j] ={"predictions":results.names[int(cls)],"conf":round(float(conf),3)}
                             j+=1
             f= Path("data").mkdir(exist_ok=True)
-            f= Path("data") / "".join([results.names[int(c)],".jpeg"])
+            d = results.names[int(c)]
+            d = d.replace(" ", "_")
+            f= Path("data") / "".join([d,".jpeg"])
             img = Image.fromarray(img.astype(np.uint8)) if isinstance(img, np.ndarray) else img 
 
             if f.is_file():
                 j = 1 
                 while(Path(f).is_file()):
-                    f = Path("data") / "".join([results.names[int(c)],str(j),".jpeg"])
+                    f = Path("data") /"".join([d,str(j),".jpeg"])
                     j+=1     
             img.save(f)
-            r["image"]= "http://127.0.0.1:5000/"+str(f)
+            r["image"]= "https://yolo.tavallaie.ir/"+str(f)
         return r
     except Exception as e:
         return {"error":"some Error happend. please try with another image"}
